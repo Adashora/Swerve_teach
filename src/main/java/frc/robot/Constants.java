@@ -18,6 +18,8 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
 
+  public static final int max_speed = 5;
+
   public static final double drive_kp = 1;
   public static final double drive_ki = 0;
   public static final double drive_kd = 0;

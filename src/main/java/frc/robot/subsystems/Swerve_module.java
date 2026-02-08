@@ -16,6 +16,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 /** Add your docs here. */
@@ -23,6 +25,9 @@ public class Swerve_module {
 
     public SparkMax drive_motor;
     public SparkMax turn_motor;
+
+    public double turn_speed;
+    public double drive_speed;
 
     public CANCoder best_encoder;
     public RelativeEncoder drive_encoder;
@@ -46,7 +51,7 @@ public class Swerve_module {
 
 
         this.turn_offset = turn_offset;
-        this.drive_config = new SparkMaxConfig();
+        this.drive_config = new SparkMaxConfig(); 
         this.turn_config = new SparkMaxConfig();
 
         this.module_number = module_number;
@@ -93,8 +98,56 @@ public class Swerve_module {
 
             turn_PID = new PIDController(Constants.turn_kp, Constants.turn_ki, Constants.turn_kd);
 
-        
+    }
 
+    public Rotation2d getCANCoder(){
+
+        double angle = this.best_encoder.getAbsolutePosition();
+        SmartDashboard.putNumber("cancoder Angle" + this.module_number, angle);
+
+        return Rotation2d.fromDegrees(angle);
+    }
+
+    public SwerveModuleState get_State(){
+        //double speed_ms = this.drive_encoder.getVelocity();
+        //Rotation2d angle = getCANCoder();
+
+        return new SwerveModuleState(this.drive_encoder.getVelocity(), getCANCoder());
+
+    }
+
+    public void set_desired_state(SwerveModuleState desired_State){
+
+        SwerveModuleState current_state = this.get_State();
+
+        Rotation2d current_rotation = current_state.angle.minus(turn_offset);
+
+
+
+        desired_State.optimize(current_rotation);
+
+        desired_State.cosineScale(current_rotation);
+
+
+        Rotation2d desired_rotation = desired_State.angle;
+
+        double diff = desired_rotation.getDegrees() - current_rotation.getDegrees();
+
+
+        if (Math.abs(diff) < 1) {
+            turn_speed = 0;
+        } 
+        else {
+            turn_speed = turn_PID.calculate(diff, 0);
+        }
+
+        drive_speed = desired_State.speedMetersPerSecond / Constants.max_speed;
+
+        turn_motor.set(turn_speed);
+        drive_motor.set(drive_speed);
+
+        SmartDashboard.putNumber("desired Rotation" + this.module_number, desired_rotation.getDegrees());
+        SmartDashboard.putNumber("current Rotation" + this.module_number, current_rotation.getDegrees());
 
 
 
