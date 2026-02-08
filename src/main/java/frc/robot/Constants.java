@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -16,6 +18,23 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+
+  public static final double robot_length = Units.inchesToMeters(25);
+  public static final double robot_width = Units.inchesToMeters(25);
+
+  public static final Translation2d front_right = new Translation2d(robot_length/2, -robot_width/2);
+  public static final Translation2d front_left = new Translation2d(robot_length/2, robot_width/2);
+  public static final Translation2d back_right = new Translation2d(robot_length/2, -robot_width/2);
+  public static final Translation2d back_left = new Translation2d(robot_length/2, robot_width/2);
+
+
+  public static final SwerveDriveKinematics swerve_map = new SwerveDriveKinematics(
+  front_left,
+  front_right,
+  back_right,
+  back_left);
+
 
 
   public static final int max_speed = 5;
@@ -48,6 +67,7 @@ public final class Constants {
       public static final int turn_id = 2;
       public static final int cancoder_id = 3;
       public static Rotation2d turn_offset = Rotation2d.fromDegrees(0);
+      public static final int module_number = 0;
 
 
 
@@ -58,6 +78,7 @@ public final class Constants {
       public static final int turn_id = 5;
       public static final int cancoder_id = 6;
       public static Rotation2d turn_offset = Rotation2d.fromDegrees(0);
+      public static final int module_number = 1;
 
 
       
@@ -69,6 +90,7 @@ public final class Constants {
       public static final int turn_id = 8;
       public static final int cancoder_id = 9;
       public static Rotation2d turn_offset = Rotation2d.fromDegrees(0);
+      public static final int module_number = 2;
 
       
     }
@@ -78,6 +100,7 @@ public final class Constants {
       public static final int turn_id = 11;
       public static final int cancoder_id = 12;
       public static Rotation2d turn_offset = Rotation2d.fromDegrees(0);
+      public static final int module_number = 3;
 
 
       
